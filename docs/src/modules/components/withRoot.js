@@ -38,7 +38,8 @@ const pages = [
         pathname: '/getting-started/example-projects',
       },
       {
-        pathname: '/getting-started/frequently-asked-questions',
+        pathname: '/getting-started/faq',
+        title: 'Frequently Asked Questions',
       },
       {
         pathname: '/getting-started/comparison',
@@ -50,7 +51,8 @@ const pages = [
     pathname: '/style',
     children: [
       {
-        pathname: '/style/reboot',
+        pathname: '/style/css-baseline',
+        title: 'CSS Baseline',
       },
       {
         pathname: '/style/color',
@@ -116,7 +118,7 @@ const pages = [
         pathname: '/customization/themes',
       },
       {
-        pathname: '/customization/theme-default',
+        pathname: '/customization/default-theme',
         title: 'Default Theme',
       },
       {
@@ -130,7 +132,7 @@ const pages = [
     children: [
       {
         pathname: '/guides/api',
-        title: 'API',
+        title: 'API Design Approach',
       },
       {
         pathname: '/guides/minimizing-bundle-size',
@@ -167,6 +169,22 @@ const pages = [
         pathname: '/guides/right-to-left',
         title: 'Right-to-left',
       },
+    ],
+  },
+  {
+    pathname: '/premium-themes',
+  },
+  {
+    pathname: '/lab',
+    children: [
+      {
+        pathname: '/lab/about',
+        title: 'About The Lab',
+      },
+      {
+        pathname: '/lab/speed-dial',
+      },
+      findPages[2].children[1],
     ],
   },
   {

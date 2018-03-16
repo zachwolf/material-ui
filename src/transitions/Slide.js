@@ -6,6 +6,8 @@ import { findDOMNode } from 'react-dom';
 import EventListener from 'react-event-listener';
 import debounce from 'lodash/debounce';
 import Transition from 'react-transition-group/Transition';
+import ownerWindow from 'dom-helpers/ownerWindow';
+import polyfill from 'react-lifecycles-compat';
 import withTheme from '../styles/withTheme';
 import { duration } from '../styles/transitions';
 import { reflow, getTransitionProps } from './utils';
@@ -24,7 +26,7 @@ function getTranslateValue(props, node) {
   if (node.fakeTransform) {
     transform = node.fakeTransform;
   } else {
-    const computedStyle = window.getComputedStyle(node);
+    const computedStyle = ownerWindow(node).getComputedStyle(node);
     transform =
       computedStyle.getPropertyValue('-webkit-transform') ||
       computedStyle.getPropertyValue('transform');
@@ -68,9 +70,19 @@ export function setTranslateValue(props, node) {
  * It uses [react-transition-group](https://github.com/reactjs/react-transition-group) internally.
  */
 class Slide extends React.Component {
-  state = {
-    mounted: false,
-  };
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (typeof prevState.mounted === 'undefined') {
+      return {
+        mounted: false,
+      };
+    }
+
+    return {
+      mounted: true,
+    };
+  }
+
+  state = {};
 
   componentDidMount() {
     // state.mounted handle SSR, once the component is mounted, we need
@@ -80,12 +92,6 @@ class Slide extends React.Component {
       // otherwise component will be shown when in=false.
       this.updatePosition();
     }
-  }
-
-  componentWillReceiveProps() {
-    this.setState({
-      mounted: true,
-    });
   }
 
   componentDidUpdate(prevProps) {
@@ -103,10 +109,10 @@ class Slide extends React.Component {
   transition = null;
 
   updatePosition() {
-    const element = findDOMNode(this.transition);
-    if (element instanceof HTMLElement) {
-      element.style.visibility = 'inherit';
-      setTranslateValue(this.props, element);
+    const node = findDOMNode(this.transition);
+    if (node) {
+      node.style.visibility = 'inherit';
+      setTranslateValue(this.props, node);
     }
   }
 
@@ -117,10 +123,10 @@ class Slide extends React.Component {
     }
 
     const node = findDOMNode(this.transition);
-    if (node instanceof HTMLElement) {
+    if (node) {
       setTranslateValue(this.props, node);
     }
-  }, 166);
+  }, 166); // Corresponds to 10 frames at 60 Hz.
 
   handleEnter = node => {
     setTranslateValue(this.props, node);
@@ -298,4 +304,4 @@ Slide.defaultProps = {
   },
 };
 
-export default withTheme()(Slide);
+export default withTheme()(polyfill(Slide));

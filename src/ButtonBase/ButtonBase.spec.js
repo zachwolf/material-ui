@@ -31,20 +31,20 @@ describe('<ButtonBase />', () => {
       const wrapper = shallow(<ButtonBase>Hello</ButtonBase>);
       assert.strictEqual(wrapper.name(), 'button');
       assert.strictEqual(wrapper.childAt(0).equals('Hello'), true, 'should say Hello');
-      assert.strictEqual(wrapper.props().type, 'button', 'should be type button');
+      assert.strictEqual(wrapper.props().type, 'button');
     });
 
     it('should change the button type', () => {
       const wrapper = shallow(<ButtonBase type="submit">Hello</ButtonBase>);
       assert.strictEqual(wrapper.name(), 'button');
-      assert.strictEqual(wrapper.props().type, 'submit', 'should be type submit');
+      assert.strictEqual(wrapper.props().type, 'submit');
     });
 
     it('should change the button component and add accessibility requirements', () => {
       const wrapper = shallow(<ButtonBase component="span" role="checkbox" aria-checked={false} />);
       assert.strictEqual(wrapper.name(), 'span');
-      assert.strictEqual(wrapper.props().role, 'checkbox', 'should be role checkbox');
-      assert.strictEqual(wrapper.props().tabIndex, 0, 'should be 0');
+      assert.strictEqual(wrapper.props().role, 'checkbox');
+      assert.strictEqual(wrapper.props().tabIndex, '0');
     });
 
     it('should spread props on button', () => {
@@ -82,11 +82,11 @@ describe('<ButtonBase />', () => {
       assert.strictEqual(wrapper.props().href, 'http://google.com');
     });
 
-    it('should not set role="button" on an invalid component', () => {
+    it('should change the button type to a and set role="button"', () => {
       const wrapper = shallow(<ButtonBase component="a">Hello</ButtonBase>);
       assert.strictEqual(wrapper.name(), 'a');
       assert.strictEqual(wrapper.props().type, undefined);
-      assert.strictEqual(wrapper.props().role, undefined);
+      assert.strictEqual(wrapper.props().role, 'button');
     });
 
     it('should not change the button to an a element', () => {
@@ -234,7 +234,11 @@ describe('<ButtonBase />', () => {
     let wrapper;
 
     before(() => {
-      wrapper = shallow(<ButtonBase focusRipple>Hello</ButtonBase>);
+      wrapper = mount(
+        <ButtonBaseNaked theme={{}} classes={{}} focusRipple>
+          Hello
+        </ButtonBaseNaked>,
+      );
     });
 
     it('should be enabled by default', () => {
@@ -325,7 +329,7 @@ describe('<ButtonBase />', () => {
     before(() => {
       clock = useFakeTimers();
       wrapper = mount(
-        <ButtonBaseNaked classes={{}} id="test-button">
+        <ButtonBaseNaked theme={{}} classes={{}} id="test-button">
           Hello
         </ButtonBaseNaked>,
       );
@@ -363,7 +367,7 @@ describe('<ButtonBase />', () => {
   describe('prop: disabled', () => {
     it('should apply the right tabIndex', () => {
       const wrapper = shallow(<ButtonBase disabled>Hello</ButtonBase>);
-      assert.strictEqual(wrapper.props().tabIndex, -1, 'should not receive the focus');
+      assert.strictEqual(wrapper.props().tabIndex, '-1', 'should not receive the focus');
     });
 
     it('should also apply it when using component', () => {
@@ -418,7 +422,7 @@ describe('<ButtonBase />', () => {
 
     it('when disabled should not persist event', () => {
       const wrapper = mount(
-        <ButtonBaseNaked classes={{}} disabled>
+        <ButtonBaseNaked theme={{}} classes={{}} disabled>
           Hello
         </ButtonBaseNaked>,
       );
@@ -432,7 +436,12 @@ describe('<ButtonBase />', () => {
       const eventMock = 'woofButtonBase';
       const onKeyboardFocusSpy = spy();
       const wrapper = mount(
-        <ButtonBaseNaked classes={{}} component="span" onKeyboardFocus={onKeyboardFocusSpy}>
+        <ButtonBaseNaked
+          theme={{}}
+          classes={{}}
+          component="span"
+          onKeyboardFocus={onKeyboardFocusSpy}
+        >
           Hello
         </ButtonBaseNaked>,
       );
@@ -450,7 +459,7 @@ describe('<ButtonBase />', () => {
         </a>
       );
       const wrapper = mount(
-        <ButtonBaseNaked classes={{}} component={MyLink}>
+        <ButtonBaseNaked theme={{}} classes={{}} component={MyLink}>
           Hello
         </ButtonBaseNaked>,
       );
@@ -468,7 +477,11 @@ describe('<ButtonBase />', () => {
 
     describe('avoids multiple keydown presses', () => {
       it('should work', () => {
-        wrapper = mount(<ButtonBaseNaked classes={{}}>Hello</ButtonBaseNaked>);
+        wrapper = mount(
+          <ButtonBaseNaked theme={{}} classes={{}}>
+            Hello
+          </ButtonBaseNaked>,
+        );
         wrapper.setProps({ focusRipple: true });
         wrapper.setState({ keyboardFocused: true });
 
@@ -492,7 +505,11 @@ describe('<ButtonBase />', () => {
 
     describe('prop: onKeyDown', () => {
       it('should work', () => {
-        wrapper = mount(<ButtonBaseNaked classes={{}}>Hello</ButtonBaseNaked>);
+        wrapper = mount(
+          <ButtonBaseNaked theme={{}} classes={{}}>
+            Hello
+          </ButtonBaseNaked>,
+        );
         const onKeyDownSpy = spy();
         wrapper.setProps({ onKeyDown: onKeyDownSpy });
 
@@ -516,7 +533,11 @@ describe('<ButtonBase />', () => {
 
     describe('Keyboard accessibility for non interactive elements', () => {
       it('should work', () => {
-        wrapper = mount(<ButtonBaseNaked classes={{}}>Hello</ButtonBaseNaked>);
+        wrapper = mount(
+          <ButtonBaseNaked theme={{}} classes={{}}>
+            Hello
+          </ButtonBaseNaked>,
+        );
         const onClickSpy = spy();
         wrapper.setProps({ onClick: onClickSpy, component: 'div' });
 
@@ -526,11 +547,11 @@ describe('<ButtonBase />', () => {
           preventDefault: spy(),
           keyCode: keycode('space'),
           target: eventTargetMock,
+          currentTarget: eventTargetMock,
         };
 
         instance = wrapper.instance();
         instance.keyDown = false;
-        instance.button = eventTargetMock;
         instance.handleKeyDown(event);
 
         assert.strictEqual(instance.keyDown, false, 'should not change keydown');
@@ -543,12 +564,16 @@ describe('<ButtonBase />', () => {
 
     describe('prop: disableRipple', () => {
       it('should work', () => {
-        wrapper = mount(<ButtonBaseNaked classes={{}}>Hello</ButtonBaseNaked>);
+        wrapper = mount(
+          <ButtonBaseNaked theme={{}} classes={{}}>
+            Hello
+          </ButtonBaseNaked>,
+        );
+        assert.strictEqual(wrapper.find(TouchRipple).length, 1);
         const onKeyDownSpy = spy();
-        wrapper.setProps({ onKeyDown: onKeyDownSpy });
-        wrapper.setProps({ disableRipple: true });
-        wrapper.setProps({ focusRipple: true });
+        wrapper.setProps({ onKeyDown: onKeyDownSpy, disableRipple: true, focusRipple: true });
         wrapper.setState({ keyboardFocused: true });
+        assert.strictEqual(wrapper.find(TouchRipple).length, 0);
 
         const eventPersistSpy = spy();
         event = { persist: eventPersistSpy, keyCode: keycode('space') };

@@ -12,11 +12,11 @@ filename: /src/Tabs/Tab.js
 
 | Name | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| classes | object |  | Useful to extend the style applied to components. |
-| disabled | bool | false | If `true`, the tab will be disabled. |
-| icon | node |  | The icon element. |
-| label | node |  | The label element. |
-| value | any |  | You can provide your own value. Otherwise, we fallback to the child position index. |
+| <span class="prop-name">classes</span> | <span class="prop-type">object |  | Useful to extend the style applied to components. |
+| <span class="prop-name">disabled</span> | <span class="prop-type">bool | <span class="prop-default">false</span> | If `true`, the tab will be disabled. |
+| <span class="prop-name">icon</span> | <span class="prop-type">node |  | The icon element. |
+| <span class="prop-name">label</span> | <span class="prop-type">node |  | The label element. |
+| <span class="prop-name">value</span> | <span class="prop-type">any |  | You can provide your own value. Otherwise, we fallback to the child position index. |
 
 Any other properties supplied will be [spread to the root element](/guides/api#spread).
 
@@ -25,16 +25,16 @@ Any other properties supplied will be [spread to the root element](/guides/api#s
 You can override all the class names injected by Material-UI thanks to the `classes` property.
 This property accepts the following keys:
 - `root`
-- `rootLabelIcon`
-- `rootInherit`
-- `rootPrimary`
-- `rootPrimarySelected`
-- `rootPrimaryDisabled`
-- `rootSecondary`
-- `rootSecondarySelected`
-- `rootSecondaryDisabled`
-- `rootInheritSelected`
-- `rootInheritDisabled`
+- `labelIcon`
+- `textColorInherit`
+- `textColorPrimary`
+- `textColorPrimarySelected`
+- `textColorPrimaryDisabled`
+- `textColorSecondary`
+- `textColorSecondarySelected`
+- `textColorSecondaryDisabled`
+- `textColorInheritSelected`
+- `textColorInheritDisabled`
 - `fullWidth`
 - `wrapper`
 - `labelContainer`

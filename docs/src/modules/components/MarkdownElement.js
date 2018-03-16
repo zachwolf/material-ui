@@ -78,9 +78,6 @@ const styles = theme => ({
   root: {
     fontFamily: theme.typography.fontFamily,
     fontSize: 16,
-    marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2,
-    padding: `0 ${theme.spacing.unit}px`,
     color: theme.palette.text.primary,
     '& .anchor-link': {
       marginTop: -theme.spacing.unit * 12, // Offset for the anchor.
@@ -133,6 +130,8 @@ const styles = theme => ({
       '& code': {
         fontSize: 'inherit',
         lineHeight: 'inherit',
+        // Remove scroll on small screens.
+        wordBreak: 'break-word',
       },
       '& .anchor-link-style': {
         opacity: 0,
@@ -161,14 +160,31 @@ const styles = theme => ({
       borderCollapse: 'collapse',
       borderSpacing: 0,
       overflow: 'hidden',
+      '& .prop-name': {
+        fontSize: 13,
+        fontFamily: 'Consolas, "Liberation Mono", Menlo, monospace',
+      },
+      '& .required': {
+        color: theme.palette.type === 'light' ? '#006500' : '#9bc89b',
+      },
+      '& .prop-type': {
+        fontSize: 13,
+        fontFamily: 'Consolas, "Liberation Mono", Menlo, monospace',
+        color: theme.palette.type === 'light' ? '#932981' : '#dbb0d0',
+      },
+      '& .prop-default': {
+        fontSize: 13,
+        fontFamily: 'Consolas, "Liberation Mono", Menlo, monospace',
+        borderBottom: `1px dotted ${theme.palette.text.hint}`,
+      },
     },
     '& thead': {
-      fontSize: 13,
+      fontSize: 14,
       fontWeight: theme.typography.fontWeightMedium,
       color: theme.palette.text.secondary,
     },
     '& tbody': {
-      fontSize: 13,
+      fontSize: 14,
       lineHeight: 1.5,
       color: theme.palette.text.primary,
     },
@@ -221,6 +237,9 @@ const styles = theme => ({
       '&:hover': {
         textDecoration: 'underline',
       },
+    },
+    '& img': {
+      maxWidth: '100%',
     },
   },
 });

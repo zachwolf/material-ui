@@ -38,6 +38,7 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
   Menu,
@@ -267,6 +268,12 @@ const DialogTest = () => {
             </ListItemAvatar>
             <ListItemText primary="add account" />
           </ListItem>
+          <ListItem button>
+            <ListItemIcon>
+              <FakeIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inbox" />
+          </ListItem>
         </List>
       </div>
     </Dialog>
@@ -389,6 +396,9 @@ const ListTest = () => (
         </ListItemSecondaryAction>
       </ListItem>
     ))}
+    <ListItem ContainerComponent="div" ContainerProps={{ className: 'demo' }}>
+      an item
+    </ListItem>
   </List>
 );
 

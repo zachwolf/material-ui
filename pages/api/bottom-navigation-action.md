@@ -12,11 +12,11 @@ filename: /src/BottomNavigation/BottomNavigationAction.js
 
 | Name | Type | Default | Description |
 |:-----|:-----|:--------|:------------|
-| classes | object |  | Useful to extend the style applied to components. |
-| icon | node |  | The icon element. |
-| label | node |  | The label element. |
-| showLabel | bool |  | If `true`, the BottomNavigationAction will show its label. |
-| value | any |  | You can provide your own value. Otherwise, we fallback to the child position index. |
+| <span class="prop-name">classes</span> | <span class="prop-type">object |  | Useful to extend the style applied to components. |
+| <span class="prop-name">icon</span> | <span class="prop-type">node |  | The icon element. |
+| <span class="prop-name">label</span> | <span class="prop-type">node |  | The label element. |
+| <span class="prop-name">showLabel</span> | <span class="prop-type">bool |  | If `true`, the BottomNavigationAction will show its label. |
+| <span class="prop-name">value</span> | <span class="prop-type">any |  | You can provide your own value. Otherwise, we fallback to the child position index. |
 
 Any other properties supplied will be [spread to the root element](/guides/api#spread).
 
@@ -29,8 +29,8 @@ This property accepts the following keys:
 - `selectedIconOnly`
 - `wrapper`
 - `label`
-- `selectedLabel`
-- `hiddenLabel`
+- `labelSelected`
+- `labelHidden`
 
 Have a look at [overriding with classes](/customization/overrides#overriding-with-classes) section
 and the [implementation of the component](https://github.com/mui-org/material-ui/tree/v1-beta/src/BottomNavigation/BottomNavigationAction.js)

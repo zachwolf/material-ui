@@ -37,10 +37,7 @@ export const styles = theme => ({
     borderBottom: `1px solid ${theme.palette.divider}`,
     backgroundClip: 'padding-box',
   },
-  gutters: {
-    paddingLeft: theme.spacing.unit * 2,
-    paddingRight: theme.spacing.unit * 2,
-  },
+  gutters: theme.mixins.gutters(),
   button: {
     transition: theme.transitions.create('background-color', {
       duration: theme.transitions.duration.shortest,
@@ -76,7 +73,7 @@ class ListItem extends React.Component {
       className: classNameProp,
       component: componentProp,
       ContainerComponent,
-      ContainerProps,
+      ContainerProps: { className: ContainerClassName, ...ContainerProps } = {},
       dense,
       disabled,
       disableGutters,
@@ -108,15 +105,30 @@ class ListItem extends React.Component {
 
     if (button) {
       componentProps.component = componentProp || 'div';
-      componentProps.keyboardFocusedClassName = classes.keyboardFocused;
+      componentProps.classes = {
+        keyboardFocused: classes.keyboardFocused,
+      };
       Component = ButtonBase;
     }
 
     if (hasSecondaryAction) {
-      Component = Component !== ButtonBase && !componentProp ? 'div' : Component;
+      // Use div by default.
+      Component = !componentProps.component && !componentProp ? 'div' : Component;
+
+      // Avoid nesting of li > li.
+      if (ContainerComponent === 'li') {
+        if (Component === 'li') {
+          Component = 'div';
+        } else if (componentProps.component === 'li') {
+          componentProps.component = 'div';
+        }
+      }
 
       return (
-        <ContainerComponent className={classes.container} {...ContainerProps}>
+        <ContainerComponent
+          className={classNames(classes.container, ContainerClassName)}
+          {...ContainerProps}
+        >
           <Component {...componentProps}>{children}</Component>
           {children.pop()}
         </ContainerComponent>

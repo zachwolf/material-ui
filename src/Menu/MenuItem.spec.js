@@ -1,17 +1,24 @@
 import React from 'react';
 import { assert } from 'chai';
 import { spy } from 'sinon';
-import { createShallow, getClasses } from '../test-utils';
+import { createShallow, getClasses, createMount } from '../test-utils';
 import ListItem from '../List/ListItem';
+import ListItemSecondaryAction from '../List/ListItemSecondaryAction';
 import MenuItem from './MenuItem';
 
 describe('<MenuItem />', () => {
   let shallow;
   let classes;
+  let mount;
 
   before(() => {
     shallow = createShallow({ dive: true });
     classes = getClasses(<MenuItem />);
+    mount = createMount();
+  });
+
+  after(() => {
+    mount.cleanUp();
   });
 
   it('should render a button ListItem with with ripple', () => {
@@ -44,7 +51,7 @@ describe('<MenuItem />', () => {
 
   it('should have a tabIndex of -1 by default', () => {
     const wrapper = shallow(<MenuItem />);
-    assert.strictEqual(wrapper.props().tabIndex, -1, 'should have a -1 tabIndex');
+    assert.strictEqual(wrapper.props().tabIndex, -1);
   });
 
   describe('event callbacks', () => {
@@ -83,6 +90,27 @@ describe('<MenuItem />', () => {
 
       assert.strictEqual(wrapper.props().component, 'a');
       assert.strictEqual(wrapper.props().disableRipple, undefined);
+    });
+  });
+
+  describe('mount', () => {
+    it('should not fail with a li > li error message', () => {
+      const wrapper1 = mount(
+        <MenuItem>
+          <ListItemSecondaryAction>
+            <div />
+          </ListItemSecondaryAction>
+        </MenuItem>,
+      );
+      assert.strictEqual(wrapper1.find('li').length, 1);
+      const wrapper2 = mount(
+        <MenuItem button={false}>
+          <ListItemSecondaryAction>
+            <div />
+          </ListItemSecondaryAction>
+        </MenuItem>,
+      );
+      assert.strictEqual(wrapper2.find('li').length, 1);
     });
   });
 });

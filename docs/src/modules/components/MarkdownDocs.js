@@ -11,7 +11,7 @@ import Demo from 'docs/src/modules/components/Demo';
 import Carbon from 'docs/src/modules/components/Carbon';
 import { getHeaders, getContents, getTitle } from 'docs/src/modules/utils/parseMarkdown';
 
-const styles = {
+const styles = theme => ({
   root: {
     marginBottom: 100,
   },
@@ -20,7 +20,12 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'flex-end',
   },
-};
+  markdownElement: {
+    marginTop: theme.spacing.unit * 2,
+    marginBottom: theme.spacing.unit * 2,
+    padding: `0 ${theme.spacing.unit}px`,
+  },
+});
 
 const demoRegexp = /^"demo": "(.*)"/;
 const SOURCE_CODE_ROOT_URL = 'https://github.com/mui-org/material-ui/tree/v1-beta';
@@ -33,12 +38,9 @@ function MarkdownDocs(props, context) {
   let markdownLocation = markdownLocationProp || context.activePage.pathname;
 
   if (!markdownLocationProp) {
-    // Hack for handling the nested demos
-    if (markdownLocation.indexOf('/demos') === 0) {
-      const token = markdownLocation.split('/');
-      token.push(token[token.length - 1]);
-      markdownLocation = token.join('/');
-    }
+    const token = markdownLocation.split('/');
+    token.push(token[token.length - 1]);
+    markdownLocation = token.join('/');
 
     if (headers.filename) {
       markdownLocation = headers.filename;
@@ -46,6 +48,8 @@ function MarkdownDocs(props, context) {
       markdownLocation = `/docs/src/pages${markdownLocation}.md`;
     }
   }
+
+  const section = markdownLocation.split('/')[4];
 
   return (
     <AppContent className={classes.root}>
@@ -78,15 +82,21 @@ function MarkdownDocs(props, context) {
           );
         }
 
-        return <MarkdownElement key={content} text={content} />;
+        return <MarkdownElement className={classes.markdownElement} key={content} text={content} />;
       })}
       {headers.components.length > 0 ? (
         <MarkdownElement
+          className={classes.markdownElement}
           text={`
 ## API
 
 ${headers.components
-            .map(component => `- [&lt;${component} /&gt;](/api/${kebabCase(component)})`)
+            .map(
+              component =>
+                `- [&lt;${component} /&gt;](${section === 'lab' ? '/lab/api' : '/api'}/${kebabCase(
+                  component,
+                )})`,
+            )
             .join('\n')}
           `}
         />

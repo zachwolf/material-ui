@@ -84,7 +84,7 @@ describe('<SwitchBase />', () => {
 
   it('should have a ripple by default', () => {
     const wrapper = shallow(<SwitchBase />);
-    assert.strictEqual(wrapper.props().disableRipple, false, 'should set disableRipple to false');
+    assert.strictEqual(wrapper.props().disableRipple, undefined);
   });
 
   it('should pass disableRipple={true} to IconButton', () => {
@@ -183,6 +183,18 @@ describe('<SwitchBase />', () => {
     it('should uncheck the checkbox', () => {
       wrapper.setProps({ checked: true });
       wrapper.setProps({ checked: false });
+      assertIsNotChecked(wrapper);
+    });
+  });
+
+  describe('prop: defaultChecked', () => {
+    it('should work uncontrolled', () => {
+      const wrapper = mount(<SwitchBaseNaked classes={{}} defaultChecked />);
+      wrapper
+        .find('input')
+        .instance()
+        .click();
+      wrapper.update();
       assertIsNotChecked(wrapper);
     });
   });

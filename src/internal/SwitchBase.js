@@ -1,3 +1,5 @@
+// @inheritedComponent IconButton
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
@@ -32,25 +34,22 @@ export const styles = {
  * @ignore - internal component.
  */
 class SwitchBase extends React.Component {
-  state = {};
-
-  componentWillMount() {
-    const { props } = this;
+  constructor(props, context) {
+    super(props, context);
 
     this.isControlled = props.checked != null;
-
     if (!this.isControlled) {
       // not controlled, use internal state
-      this.setState({
-        checked: props.defaultChecked !== undefined ? props.defaultChecked : false,
-      });
+      this.state.checked = props.defaultChecked !== undefined ? props.defaultChecked : false;
     }
   }
+
+  state = {};
 
   input = null;
   isControlled = null;
 
-  handleInputChange = (event: SyntheticInputEvent<*>) => {
+  handleInputChange = event => {
     const checked = event.target.checked;
 
     if (!this.isControlled) {
@@ -115,7 +114,7 @@ class SwitchBase extends React.Component {
           id={hasLabelFor && id}
           type={type}
           name={name}
-          checked={checkedProp}
+          checked={checked}
           onChange={this.handleInputChange}
           className={classes.input}
           disabled={disabled}
@@ -211,7 +210,6 @@ SwitchBase.propTypes = {
 
 SwitchBase.defaultProps = {
   checkedIcon: <CheckBoxIcon />,
-  disableRipple: false,
   icon: <CheckBoxOutlineBlankIcon />,
   type: 'checkbox',
 };

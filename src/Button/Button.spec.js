@@ -193,7 +193,7 @@ describe('<Button />', () => {
 
   it('should have a ripple by default', () => {
     const wrapper = shallow(<Button>Hello World</Button>);
-    assert.strictEqual(wrapper.props().disableRipple, false);
+    assert.strictEqual(wrapper.props().disableRipple, undefined);
   });
 
   it('should pass disableRipple to ButtonBase', () => {
@@ -219,7 +219,6 @@ describe('<Button />', () => {
     const renderedIconChild = label.childAt(0);
     assert.strictEqual(renderedIconChild.type(), Icon);
     assert.strictEqual(renderedIconChild.hasClass(childClassName), true, 'child should be icon');
-    assert.strictEqual(renderedIconChild.props().fontSize, true);
   });
 
   describe('server side', () => {

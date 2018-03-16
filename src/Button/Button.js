@@ -7,7 +7,6 @@ import withStyles from '../styles/withStyles';
 import { fade } from '../styles/colorManipulator';
 import ButtonBase from '../ButtonBase';
 import { capitalize } from '../utils/helpers';
-import { isMuiElement } from '../utils/reactHelpers';
 
 export const styles = theme => ({
   root: {
@@ -149,7 +148,7 @@ export const styles = theme => ({
 
 function Button(props) {
   const {
-    children: childrenProp,
+    children,
     classes,
     className: classNameProp,
     color,
@@ -183,23 +182,14 @@ function Button(props) {
     classNameProp,
   );
 
-  let children = childrenProp;
-
-  if (fab) {
-    children = React.Children.map(children, child => {
-      if (isMuiElement(child, ['Icon', 'SvgIcon'])) {
-        return React.cloneElement(child, { fontSize: true });
-      }
-      return child;
-    });
-  }
-
   return (
     <ButtonBase
       className={className}
       disabled={disabled}
       focusRipple={!disableFocusRipple}
-      keyboardFocusedClassName={classes.keyboardFocused}
+      classes={{
+        keyboardFocused: classes.keyboardFocused,
+      }}
       {...other}
     >
       <span className={classes.label}>{children}</span>
@@ -253,7 +243,7 @@ Button.propTypes = {
    */
   href: PropTypes.string,
   /**
-   * If `true`, and `fab` is `true`, will use mini floating action button styling.
+   * If `true`, and `variant` is `'fab'`, will use mini floating action button styling.
    */
   mini: PropTypes.bool,
   /**
@@ -266,7 +256,7 @@ Button.propTypes = {
    */
   type: PropTypes.string,
   /**
-   * The color of the component. It supports those theme colors that make sense for this component.
+   * The type of button.
    */
   variant: PropTypes.oneOf(['flat', 'raised', 'fab']),
 };
@@ -275,7 +265,6 @@ Button.defaultProps = {
   color: 'default',
   disabled: false,
   disableFocusRipple: false,
-  disableRipple: false,
   fullWidth: false,
   mini: false,
   size: 'medium',

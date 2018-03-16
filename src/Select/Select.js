@@ -43,7 +43,6 @@ export const styles = theme => ({
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     minHeight: '1.1875em', // Reset (19px), match the native input line-height
-    lineHeight: '1.1875em', // Reset (19px), match the native input line-height
   },
   disabled: {
     cursor: 'default',
@@ -74,6 +73,7 @@ function Select(props) {
     onOpen,
     open,
     renderValue,
+    SelectDisplayProps,
     ...other
   } = props;
 
@@ -81,10 +81,7 @@ function Select(props) {
     // Most of the logic is implemented in `SelectInput`.
     // The `Select` component is a simple API wrapper to expose something better to play with.
     inputComponent: SelectInput,
-    ...other,
     inputProps: {
-      ...inputProps,
-      ...(input ? input.props.inputProps : {}),
       autoWidth,
       children,
       classes,
@@ -96,7 +93,12 @@ function Select(props) {
       onOpen,
       open,
       renderValue,
+      SelectDisplayProps,
+      type: undefined, // We render a select. We can ignore the type provided by the `Input`.
+      ...inputProps,
+      ...(input ? input.props.inputProps : {}),
     },
+    ...other,
   });
 }
 
@@ -171,10 +173,18 @@ Select.propTypes = {
   /**
    * Render the selected value.
    * You can only use it when the `native` property is `false` (default).
+   *
+   * @param {*} value The `value` provided to the component.
+   * @returns {ReactElement}
    */
   renderValue: PropTypes.func,
   /**
-   * The input value, required for a controlled component.
+   * Properties applied to the clickable div element.
+   */
+  SelectDisplayProps: PropTypes.object,
+  /**
+   * The input value.
+   * This property is required when the `native` property is `false` (default).
    */
   value: PropTypes.oneOfType([
     PropTypes.string,

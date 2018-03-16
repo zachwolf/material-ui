@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { assert } from 'chai';
 import { spy } from 'sinon';
 import { createShallow, createMount, getClasses, unwrap } from '../test-utils';
@@ -27,7 +28,6 @@ describe('<Input />', () => {
     const wrapper = shallow(<Input />);
     assert.strictEqual(wrapper.name(), 'div');
     assert.strictEqual(wrapper.hasClass(classes.root), true);
-    assert.strictEqual(wrapper.hasClass(classes.inkbar), true, 'should have the inkbar class');
     assert.strictEqual(
       wrapper.hasClass(classes.underline),
       true,
@@ -190,6 +190,23 @@ describe('<Input />', () => {
       const wrapper = shallow(<Input inputComponent="span" />);
       assert.strictEqual(wrapper.find('span').length, 1);
     });
+
+    it('should inject onBlur and onFocus', () => {
+      let injectedProps;
+      function MyInput(props) {
+        injectedProps = props;
+        const { inputRef, ...other } = props;
+        return <input ref={inputRef} {...other} />;
+      }
+
+      MyInput.propTypes = {
+        inputRef: PropTypes.func.isRequired,
+      };
+
+      mount(<Input inputComponent={MyInput} />);
+      assert.strictEqual(typeof injectedProps.onBlur, 'function');
+      assert.strictEqual(typeof injectedProps.onFocus, 'function');
+    });
   });
 
   // Note the initial callback when
@@ -306,15 +323,15 @@ describe('<Input />', () => {
           setFormControlContext({ margin: 'dense' });
         });
 
-        it('should have the inputDense class', () => {
-          assert.strictEqual(wrapper.find('input').hasClass(classes.inputDense), true);
+        it('should have the inputMarginDense class', () => {
+          assert.strictEqual(wrapper.find('input').hasClass(classes.inputMarginDense), true);
         });
       });
 
       it('should be overridden by props', () => {
-        assert.strictEqual(wrapper.find('input').hasClass(classes.inputDense), false);
+        assert.strictEqual(wrapper.find('input').hasClass(classes.inputMarginDense), false);
         wrapper.setProps({ margin: 'dense' });
-        assert.strictEqual(wrapper.find('input').hasClass(classes.inputDense), true);
+        assert.strictEqual(wrapper.find('input').hasClass(classes.inputMarginDense), true);
       });
     });
 

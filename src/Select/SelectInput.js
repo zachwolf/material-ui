@@ -110,7 +110,7 @@ class SelectInput extends React.Component {
       return;
     }
 
-    if (['space', 'up', 'down'].includes(keycode(event))) {
+    if (['space', 'up', 'down'].indexOf(keycode(event)) !== -1) {
       event.preventDefault();
       // Opening the menu is going to blur the. It will be focused back when closed.
       this.ignoreNextBlur = true;
@@ -154,6 +154,9 @@ class SelectInput extends React.Component {
       open: openProp,
       readOnly,
       renderValue,
+      SelectDisplayProps,
+      tabIndex: tabIndexProp,
+      type = 'hidden',
       value,
       ...other
     } = this.props;
@@ -204,7 +207,7 @@ class SelectInput extends React.Component {
     if (value === undefined) {
       throw new Error(
         'Material-UI: the `value` property is required ' +
-          'when using the `Select` component with `native=false`.',
+          'when using the `Select` component with `native=false` (default).',
       );
     }
 
@@ -248,9 +251,11 @@ class SelectInput extends React.Component {
       }
 
       return React.cloneElement(child, {
+        onClick: this.handleItemClick(child),
         role: 'option',
         selected,
-        onClick: this.handleItemClick(child),
+        value: undefined, // The value is most likely not a valid HTML attribute.
+        'data-value': value, // Instead, we provide it as a data attribute.
       });
     });
 
@@ -259,6 +264,13 @@ class SelectInput extends React.Component {
     }
 
     const MenuMinWidth = this.displayNode && !autoWidth ? this.displayNode.clientWidth : undefined;
+
+    let tabIndex;
+    if (typeof tabIndexProp !== 'undefined') {
+      tabIndex = tabIndexProp;
+    } else {
+      tabIndex = disabled ? null : 0;
+    }
 
     return (
       <div className={classes.root}>
@@ -276,7 +288,7 @@ class SelectInput extends React.Component {
           }}
           data-mui-test="SelectDisplay"
           aria-pressed={open ? 'true' : 'false'}
-          tabIndex={disabled ? null : 0}
+          tabIndex={tabIndex}
           role="button"
           aria-owns={open ? `menu-${name || ''}` : null}
           aria-haspopup="true"
@@ -284,16 +296,19 @@ class SelectInput extends React.Component {
           onBlur={this.handleBlur}
           onClick={disabled || readOnly ? null : this.handleClick}
           onFocus={onFocus}
+          {...SelectDisplayProps}
         >
-          {display}
+          {/* So the vertical align positioning algorithm quicks in. */}
+          {/* eslint-disable-next-line react/no-danger */}
+          {display || <span dangerouslySetInnerHTML={{ __html: '&#8203' }} />}
         </div>
         <input
           value={Array.isArray(value) ? value.join(',') : value}
           name={name}
           readOnly={readOnly}
           ref={this.handleSelectRef}
+          type={type}
           {...other}
-          type="hidden"
         />
         <ArrowDropDownIcon className={classes.icon} />
         <Menu
@@ -411,10 +426,26 @@ SelectInput.propTypes = {
   /**
    * Render the selected value.
    * You can only use it when the `native` property is `false` (default).
+   *
+   * @param {*} value The `value` provided to the component.
+   * @returns {ReactElement}
    */
   renderValue: PropTypes.func,
   /**
-   * The value of the component, required for a controlled component.
+   * Properties applied to the clickable div element.
+   */
+  SelectDisplayProps: PropTypes.object,
+  /**
+   * @ignore
+   */
+  tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  /**
+   * @ignore
+   */
+  type: PropTypes.string,
+  /**
+   * The input value.
+   * This property is required when the `native` property is `false` (default).
    */
   value: PropTypes.oneOfType([
     PropTypes.string,

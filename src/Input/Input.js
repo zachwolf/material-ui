@@ -65,13 +65,18 @@ export const styles = theme => {
       fontFamily: theme.typography.fontFamily,
       color: light ? 'rgba(0, 0, 0, 0.87)' : theme.palette.common.white,
       fontSize: theme.typography.pxToRem(16),
+      lineHeight: '1.1875em', // Reset (19px), match the native input line-height
     },
     formControl: {
       'label + &': {
         marginTop: theme.spacing.unit * 2,
       },
     },
-    inkbar: {
+    focused: {},
+    disabled: {
+      color: theme.palette.text.disabled,
+    },
+    underline: {
       '&:after': {
         backgroundColor: theme.palette.primary[light ? 'dark' : 'light'],
         left: 0,
@@ -91,18 +96,6 @@ export const styles = theme => {
       '&$focused:after': {
         transform: 'scaleX(1)',
       },
-    },
-    error: {
-      '&:after': {
-        backgroundColor: theme.palette.error.main,
-        transform: 'scaleX(1)', // error is always underlined in red
-      },
-    },
-    focused: {},
-    disabled: {
-      color: theme.palette.text.disabled,
-    },
-    underline: {
       '&:before': {
         backgroundColor: bottomLineColor,
         left: 0,
@@ -129,6 +122,12 @@ export const styles = theme => {
         backgroundSize: '5px 1px',
       },
     },
+    error: {
+      '&:after': {
+        backgroundColor: theme.palette.error.main,
+        transform: 'scaleX(1)', // error is always underlined in red
+      },
+    },
     multiline: {
       padding: `${theme.spacing.unit - 2}px 0 ${theme.spacing.unit - 1}px`,
     },
@@ -149,7 +148,7 @@ export const styles = theme => {
       display: 'block',
       // Make the flex item shrink with Firefox
       minWidth: 0,
-      width: '100%',
+      flexGrow: 1,
       '&::-webkit-input-placeholder': placeholder,
       '&::-moz-placeholder': placeholder, // Firefox 19+
       '&:-ms-input-placeholder': placeholder, // IE 11
@@ -177,21 +176,21 @@ export const styles = theme => {
         '&:focus::-ms-input-placeholder': placeholderVisible, // Edge
       },
     },
-    inputDense: {
+    inputMarginDense: {
       paddingTop: theme.spacing.unit / 2 - 1,
     },
     inputDisabled: {
       opacity: 1, // Reset iOS opacity
     },
-    inputType: {
-      // type="date" or type="time", etc. have specific styles we need to reset.
-      height: '1.1875em', // Reset (19px), match the native input line-height
-    },
     inputMultiline: {
       resize: 'none',
       padding: 0,
     },
-    inputSearch: {
+    inputType: {
+      // type="date" or type="time", etc. have specific styles we need to reset.
+      height: '1.1875em', // Reset (19px), match the native input line-height
+    },
+    inputTypeSearch: {
       // Improve type search style.
       '-moz-appearance': 'textfield',
       '-webkit-appearance': 'textfield',
@@ -226,6 +225,15 @@ function formControlState(props, context) {
 }
 
 class Input extends React.Component {
+  constructor(props, context) {
+    super(props, context);
+
+    this.isControlled = props.value != null;
+    if (this.isControlled) {
+      this.checkDirty(props);
+    }
+  }
+
   state = {
     focused: false,
   };
@@ -236,14 +244,6 @@ class Input extends React.Component {
     return {
       muiFormControl: null,
     };
-  }
-
-  componentWillMount() {
-    this.isControlled = this.props.value != null;
-
-    if (this.isControlled) {
-      this.checkDirty(this.props);
-    }
   }
 
   componentDidMount() {
@@ -395,7 +395,6 @@ class Input extends React.Component {
         [classes.fullWidth]: fullWidth,
         [classes.focused]: this.state.focused,
         [classes.formControl]: muiFormControl,
-        [classes.inkbar]: !disableUnderline,
         [classes.multiline]: multiline,
         [classes.underline]: !disableUnderline,
       },
@@ -407,9 +406,9 @@ class Input extends React.Component {
       {
         [classes.inputDisabled]: disabled,
         [classes.inputType]: type !== 'text',
+        [classes.inputTypeSearch]: type === 'search',
         [classes.inputMultiline]: multiline,
-        [classes.inputSearch]: type === 'search',
-        [classes.inputDense]: margin === 'dense',
+        [classes.inputMarginDense]: margin === 'dense',
       },
       inputPropsClassName,
     );
@@ -446,27 +445,29 @@ class Input extends React.Component {
     }
 
     return (
-      <div onBlur={this.handleBlur} onFocus={this.handleFocus} className={className} {...other}>
+      <div className={className} {...other}>
         {startAdornment}
         <InputComponent
+          aria-invalid={error}
+          aria-required={required}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
           className={inputClassName}
-          onChange={this.handleChange}
-          onKeyUp={onKeyUp}
-          onKeyDown={onKeyDown}
+          defaultValue={defaultValue}
           disabled={disabled}
-          required={required ? true : undefined}
-          value={value}
           id={id}
           name={name}
-          defaultValue={defaultValue}
+          onBlur={this.handleBlur}
+          onChange={this.handleChange}
+          onFocus={this.handleFocus}
+          onKeyDown={onKeyDown}
+          onKeyUp={onKeyUp}
           placeholder={placeholder}
-          type={type}
           readOnly={readOnly}
+          required={required ? true : undefined}
           rows={rows}
-          aria-required={required}
-          aria-invalid={error}
+          type={type}
+          value={value}
           {...inputProps}
         />
         {endAdornment}

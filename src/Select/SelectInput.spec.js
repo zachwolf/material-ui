@@ -79,6 +79,29 @@ describe('<SelectInput />', () => {
     });
   });
 
+  describe('prop: SelectDisplayProps', () => {
+    it('should apply additional properties to the clickable div element', () => {
+      const wrapper = shallow(
+        <SelectInput {...defaultProps} SelectDisplayProps={{ 'data-test': 'SelectDisplay' }} />,
+      );
+
+      const selectDisplay = wrapper.find('[data-mui-test="SelectDisplay"]');
+      assert.strictEqual(selectDisplay.props()['data-test'], 'SelectDisplay');
+    });
+  });
+
+  describe('prop: type', () => {
+    it('should be hidden by default', () => {
+      const wrapper = shallow(<SelectInput {...defaultProps} />);
+      assert.strictEqual(wrapper.find('input').props().type, 'hidden');
+    });
+
+    it('should be able to override it', () => {
+      const wrapper = shallow(<SelectInput {...defaultProps} type="text" />);
+      assert.strictEqual(wrapper.find('input').props().type, 'text');
+    });
+  });
+
   describe('prop: displayEmpty', () => {
     it('should display the selected item even if its value is empty', () => {
       const wrapper = shallow(
@@ -88,7 +111,7 @@ describe('<SelectInput />', () => {
           <MenuItem value={30}>Thirty</MenuItem>
         </SelectInput>,
       );
-      assert.strictEqual(wrapper.find(`.${defaultProps.classes.select}`).props().children, 'Ten');
+      assert.strictEqual(wrapper.find(`.${defaultProps.classes.select}`).text(), 'Ten');
     });
   });
 
@@ -96,7 +119,7 @@ describe('<SelectInput />', () => {
     it('should use the property to render the value', () => {
       const renderValue = x => String(-x);
       const wrapper = shallow(<SelectInput {...defaultProps} renderValue={renderValue} />);
-      assert.strictEqual(wrapper.find(`.${defaultProps.classes.select}`).props().children, '-10');
+      assert.strictEqual(wrapper.find(`.${defaultProps.classes.select}`).text(), '-10');
     });
   });
 
@@ -259,6 +282,13 @@ describe('<SelectInput />', () => {
       wrapper.instance().displayNode = { clientWidth: 14 };
       wrapper.setProps({});
       assert.strictEqual(wrapper.find(Menu).props().PaperProps.style.minWidth, undefined);
+    });
+  });
+
+  describe('prop: multiple', () => {
+    it('should take precedence', () => {
+      const wrapper = shallow(<SelectInput {...defaultProps} disabled tabIndex={0} />);
+      assert.strictEqual(wrapper.find('[data-mui-test="SelectDisplay"]').props().tabIndex, 0);
     });
   });
 

@@ -16,6 +16,7 @@ export interface SnackbarProps
   action?: React.ReactElement<any> | React.ReactElement<any>[];
   anchorOrigin?: SnackBarOrigin;
   autoHideDuration?: number;
+  disableWindowBlurListener?: boolean;
   message?: React.ReactElement<any>;
   onClose?: (event: React.SyntheticEvent<any>, reason: string) => void;
   onMouseEnter?: React.MouseEventHandler<any>;
@@ -29,12 +30,12 @@ export interface SnackbarProps
 
 export type SnackbarClassKey =
   | 'root'
-  | 'anchorTopCenter'
-  | 'anchorBottomCenter'
-  | 'anchorTopRight'
-  | 'anchorBottomRight'
-  | 'anchorTopLeft'
-  | 'anchorBottomLeft';
+  | 'anchorOriginTopCenter'
+  | 'anchorOriginBottomCenter'
+  | 'anchorOriginTopRight'
+  | 'anchorOriginBottomRight'
+  | 'anchorOriginTopLeft'
+  | 'anchorOriginBottomLeft';
 
 declare const Snackbar: React.ComponentType<SnackbarProps>;
 

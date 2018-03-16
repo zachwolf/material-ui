@@ -6,16 +6,14 @@ import classNames from 'classnames';
 import withStyles from '../styles/withStyles';
 import ButtonBase from '../ButtonBase';
 import { capitalize } from '../utils/helpers';
-import { isMuiElement } from '../utils/reactHelpers';
-import '../SvgIcon'; // Ensure CSS specificity
 
 export const styles = theme => ({
   root: {
     textAlign: 'center',
     flex: '0 0 auto',
     fontSize: theme.typography.pxToRem(24),
-    width: theme.spacing.unit * 6,
-    height: theme.spacing.unit * 6,
+    width: 48,
+    height: 48,
     padding: 0,
     borderRadius: '50%',
     color: theme.palette.action.active,
@@ -65,14 +63,7 @@ function IconButton(props) {
       disabled={disabled}
       {...other}
     >
-      <span className={classes.label}>
-        {React.Children.map(children, child => {
-          if (isMuiElement(child, ['Icon', 'SvgIcon'])) {
-            return React.cloneElement(child, { fontSize: true });
-          }
-          return child;
-        })}
-      </span>
+      <span className={classes.label}>{children}</span>
     </ButtonBase>
   );
 }
@@ -107,7 +98,6 @@ IconButton.propTypes = {
 IconButton.defaultProps = {
   color: 'default',
   disabled: false,
-  disableRipple: false,
 };
 
 export default withStyles(styles, { name: 'MuiIconButton' })(IconButton);

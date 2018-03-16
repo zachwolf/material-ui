@@ -84,7 +84,15 @@ function generatePropDescription(description, type) {
     }
 
     signature += '<br><br>**Signature:**<br>`function(';
-    signature += parsedArgs.map(tag => `${tag.name}: ${tag.type.name}`).join(', ');
+    signature += parsedArgs
+      .map(tag => {
+        if (tag.type.type === 'AllLiteral') {
+          return `${tag.name}: any`;
+        }
+
+        return `${tag.name}: ${tag.type.name}`;
+      })
+      .join(', ');
     signature += `) => ${parsedReturns.type.name}\`<br>`;
     signature += parsedArgs.map(tag => `*${tag.name}:* ${tag.description}`).join('<br>');
     if (parsedReturns.description) {
@@ -170,11 +178,15 @@ function generateProps(reactAPI) {
     let defaultValue = '';
 
     if (prop.defaultValue) {
-      defaultValue = escapeCell(prop.defaultValue.value.replace(/\n/g, ''));
+      defaultValue = `<span class="prop-default">${escapeCell(
+        prop.defaultValue.value.replace(/\n/g, ''),
+      )}</span>`;
     }
 
     if (prop.required) {
-      propRaw = `<span style="color: #31a148">${propRaw}\u00a0*</span>`;
+      propRaw = `<span class="prop-name required">${propRaw}\u00a0*</span>`;
+    } else {
+      propRaw = `<span class="prop-name">${propRaw}</span>`;
     }
 
     if (prop.type.name === 'custom') {
@@ -183,7 +195,7 @@ function generateProps(reactAPI) {
       }
     }
 
-    textProps += `| ${propRaw} | ${generatePropType(
+    textProps += `| ${propRaw} | <span class="prop-type">${generatePropType(
       prop.type,
     )} | ${defaultValue} | ${description} |\n`;
 
@@ -272,7 +284,7 @@ ${pagesMarkdown.map(page => `- [${pageToTitle(page)}](${page.pathname})`).join('
 `;
 }
 
-export default function generateMarkdown(reactAPI: Object) {
+export default function generateMarkdown(reactAPI) {
   return [
     generateHeader(reactAPI),
     '',

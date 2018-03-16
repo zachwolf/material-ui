@@ -39,11 +39,8 @@ export const styles = {
     pointerEvents: 'none', // Disable link interactions
     cursor: 'default',
   },
+  keyboardFocused: {},
 };
-
-// Don't automatically add the role="button" property on these components.
-// It's invalid HTML syntax.
-const INVALID_COMPONENT_ROLE = ['a'];
 
 /**
  * `ButtonBase` contains as few styles as possible.
@@ -70,12 +67,12 @@ class ButtonBase extends React.Component {
     }
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentDidUpdate(prevProps, prevState) {
     if (
       this.props.focusRipple &&
-      nextState.keyboardFocused &&
-      !this.state.keyboardFocused &&
-      !this.props.disableRipple
+      !this.props.disableRipple &&
+      !prevState.keyboardFocused &&
+      this.state.keyboardFocused
     ) {
       this.ripple.pulsate();
     }
@@ -131,15 +128,15 @@ class ButtonBase extends React.Component {
 
     // Keyboard accessibility for non interactive elements
     if (
-      event.target === this.button &&
-      onClick &&
+      event.target === event.currentTarget &&
       component &&
-      component !== 'a' &&
       component !== 'button' &&
       (key === 'space' || key === 'enter')
     ) {
       event.preventDefault();
-      onClick(event);
+      if (onClick) {
+        onClick(event);
+      }
     }
   };
 
@@ -218,7 +215,6 @@ class ButtonBase extends React.Component {
       disabled,
       disableRipple,
       focusRipple,
-      keyboardFocusedClassName,
       onBlur,
       onFocus,
       onKeyboardFocus,
@@ -231,6 +227,7 @@ class ButtonBase extends React.Component {
       onTouchMove,
       onTouchStart,
       tabIndex,
+      TouchRippleProps,
       type,
       ...other
     } = this.props;
@@ -239,7 +236,7 @@ class ButtonBase extends React.Component {
       classes.root,
       {
         [classes.disabled]: disabled,
-        [keyboardFocusedClassName || '']: this.state.keyboardFocused,
+        [classes.keyboardFocused]: this.state.keyboardFocused,
       },
       classNameProp,
     );
@@ -259,7 +256,7 @@ class ButtonBase extends React.Component {
     if (ComponentProp === 'button') {
       buttonProps.type = type || 'button';
       buttonProps.disabled = disabled;
-    } else if (INVALID_COMPONENT_ROLE.indexOf(ComponentProp) === -1) {
+    } else {
       buttonProps.role = 'button';
     }
 
@@ -275,7 +272,7 @@ class ButtonBase extends React.Component {
         onTouchEnd={this.handleTouchEnd}
         onTouchMove={this.handleTouchMove}
         onTouchStart={this.handleTouchStart}
-        tabIndex={disabled ? -1 : tabIndex}
+        tabIndex={disabled ? '-1' : tabIndex}
         className={className}
         ref={buttonRef}
         {...buttonProps}
@@ -283,7 +280,7 @@ class ButtonBase extends React.Component {
       >
         {children}
         {!disableRipple && !disabled ? (
-          <TouchRipple innerRef={this.onRippleRef} center={centerRipple} />
+          <TouchRipple innerRef={this.onRippleRef} center={centerRipple} {...TouchRippleProps} />
         ) : null}
       </ComponentProp>
     );
@@ -331,10 +328,6 @@ ButtonBase.propTypes = {
    * `disableRipple` must also be `false`.
    */
   focusRipple: PropTypes.bool,
-  /**
-   * The CSS class applied while the component is keyboard focused.
-   */
-  keyboardFocusedClassName: PropTypes.string,
   /**
    * @ignore
    */
@@ -393,6 +386,10 @@ ButtonBase.propTypes = {
    */
   tabIndex: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   /**
+   * Properties applied to the `TouchRipple` element.
+   */
+  TouchRippleProps: PropTypes.object,
+  /**
    * @ignore
    */
   type: PropTypes.string,
@@ -402,7 +399,7 @@ ButtonBase.defaultProps = {
   centerRipple: false,
   disableRipple: false,
   focusRipple: false,
-  tabIndex: 0,
+  tabIndex: '0',
   type: 'button',
 };
 
